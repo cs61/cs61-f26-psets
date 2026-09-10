@@ -106,11 +106,12 @@ RUN apt-get -y install\
  qemu-user
 
 # link x86-64 versions of common tools into /usr/x86_64-linux-gnu/bin
-RUN for i in addr2line c++filt cpp g++ gcc gcov gcov-dump gcov-tool size strings; do \
-        ln -s /usr/bin/x86_64-linux-gnu-$i /usr/x86_64-linux-gnu/bin/$i; done &&\
- ln -s /usr/bin/x86_64-linux-gnu-g++ /usr/x86_64-linux-gnu/bin/c++ &&\
- ln -s /usr/bin/x86_64-linux-gnu-gcc /usr/x86_64-linux-gnu/bin/cc &&\
- ln -s /usr/bin/gdb-multiarch /usr/x86_64-linux-gnu/bin/gdb
+RUN for i in `cd /usr/bin; echo x86_64-linux-gnu-*`; do \
+    j=/usr/x86_64-linux-gnu/bin/`echo $i | sed 's/^x86_64-linux-gnu-//'`;\
+    test -e $j || ln -s ../../bin/$i $j; done &&\
+ ln -s /usr/bin/gdb-multiarch /usr/x86_64-linux-gnu/bin/gdb;\
+ test -e /usr/x86_64-linux-gnu/bin/cc || ln -s gcc /usr/x86_64-linux-gnu/bin/cc;\
+ test -e /usr/x86_64-linux-gnu/bin/c++ || ln -s g++ /usr/x86_64-linux-gnu/bin/c++
 
 # install programs useful for disk images
 RUN apt-get -y install\

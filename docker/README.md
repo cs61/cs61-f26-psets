@@ -138,4 +138,4 @@ $
 [VMware Fusion]: https://www.vmware.com/products/fusion.html
 [VirtualBox]: https://www.virtualbox.org/
 [cs61-lectures]: https://github.com/cs61/cs61-lectures/
-[repo]: https://github.com/cs61/cs61-f25-psets/
+[repo]: https://github.com/cs61/cs61-f26-psets/
