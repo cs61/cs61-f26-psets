@@ -160,6 +160,29 @@ xrun = $(if $(2),/bin/echo "  $(2) $(3)" &&,) $(1) $(3)
 endif
 runquiet = @$(1) $(3)
 
+CXX_LINK_PREREQUISITES = $(CXX) $(CXXFLAGS) $(LDFLAGS) $(O) -o $@ $^
+
+CLEANASM = 1
+ifeq ($(CLEANASM),1)
+cleanasm = perl -ni -e '$$badsection = !!/\.note\.gnu/ if /^\s+\.section/; print if !/^(?:\# BB|\s+\.cfi|\s+\.p2align|\s+\.loc|\.LF[BE]|\.LVL|\s+\# =>This|\s+\# kill)/ && !$$badsection' $(1)
+else
+cleanasm = :
+endif
+
+DEFAULT_ASM_CXXFLAGS ?= $(O)
+flagged_compile = @ARGS=$$(grep '^//!' $< | sed 's/.*!//$(patsubst %,;s/ % */ /,$(BADCXXFLAGS));s/^ | $$//'); \
+	  if test -z "$$ARGS"; then ARGS="$(DEFAULT_ASM_CXXFLAGS)"; fi; \
+	  $(call xrun,$(CXX) $(3) $$ARGS -o $(2) $(1),COMPILE $$ARGS $(1) -o $(2))
+flagged_compile_S = $(call flagged_compile,$(1),$(2),$(filter-out -g,$(3) -S)) && { $(call cleanasm,$(2)); }
+flagged_compile_c = $(call flagged_compile,$(1),$(2),$(3) -c)
+
+buildasm:
+	rm -f $(BUILDABLEASM)
+	$(MAKE) $(BUILDABLEASM)
+
+
+PERCENT := %
+
 # cancel implicit rules we don't want
 %: %.c
 %.o: %.c
@@ -178,5 +201,5 @@ always:
 clean-hook:
 	@:
 
-.PHONY: always clean-hook
+.PHONY: always buildasm clean-hook
 .PRECIOUS: %.o
