@@ -1,6 +1,7 @@
 #ifndef M61_UTILS_HH
 #define M61_UTILS_HH 1
 #include <random>
+#include <array>
 
 // random_source.hh
 //    Source of randomness, with helpers for different distributions.
