@@ -1,4 +1,5 @@
 # compiler flags
+CPPFLAGS := -I.
 CFLAGS := -std=gnu2x -Wall -Wextra -Wshadow -Wvla -g $(DEFS) $(CFLAGS)
 CXXFLAGS := -std=gnu++2a -Wall -Wextra -Wshadow -Wvla -g $(DEFS) $(CXXFLAGS)
 
@@ -151,11 +152,12 @@ endif
 
 # remember the most recent `M61` setting
 M61STAMP := $(DEPSDIR)/m61stamp
-DEP_M61 ?= system
+DEP_M61 ?= pset
 M61 ?= $(DEP_M61)
 ifneq ($(strip $(DEP_M61)),$(strip $(M61)))
-DEP_M61 := $(shell mkdir -p $(DEPSDIR); echo >$(M61STAMP); echo "DEP_M61:=$(M61)" >$(DEPSDIR)/_m61.d)
+DEP_M61 := $(shell mkdir -p $(DEPSDIR); echo >$(M61STAMP); (echo "DEP_M61:=$(M61)"; echo "m61-$(M61).cc:") >$(DEPSDIR)/_m61.d)
 endif
+$(shell printf '\x1b[31m*** Using m61-$(M61).cc ***\x1b[m\n\n' 1>&2)
 
 
 V = 0
