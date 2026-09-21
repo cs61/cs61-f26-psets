@@ -1,7 +1,7 @@
 # compiler flags
 CPPFLAGS := -I.
 CFLAGS := -std=gnu2x -Wall -Wextra -Wshadow -Wvla -g $(DEFS) $(CFLAGS)
-CXXFLAGS := -std=gnu++2a -Wall -Wextra -Wshadow -Wvla -g $(DEFS) $(CXXFLAGS)
+CXXFLAGS := -std=gnu++23 -Wall -Wextra -Wshadow -Wvla -g $(DEFS) $(CXXFLAGS)
 
 O ?= -O3
 ifeq ($(filter 0 1 2 3 s z g fast,$(O)),$(strip $(O)))
@@ -157,7 +157,7 @@ M61 ?= $(DEP_M61)
 ifneq ($(strip $(DEP_M61)),$(strip $(M61)))
 DEP_M61 := $(shell mkdir -p $(DEPSDIR); echo >$(M61STAMP); (echo "DEP_M61:=$(M61)"; echo "m61-$(M61).cc:") >$(DEPSDIR)/_m61.d)
 endif
-$(shell printf '\x1b[31m*** Using m61-$(M61).cc ***\x1b[m\n\n' 1>&2)
+$(shell printf '\x1b[31m*** Using m61-$(M61).cc, sanitizers $(if $(SANFLAGS),enabled,disabled) ***\x1b[m\n\n' 1>&2)
 
 
 V = 0

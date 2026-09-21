@@ -1,1 +1,13 @@
 *[0-9][0-9][0-9]
+t/*
+!t/*.cc
+!t/*.hh
+!t/*.md
+tt/*
+!tt/*.cc
+!tt/*.hh
+!tt/*.md
+torture/*
+!torture/*.cc
+!torture/*.hh
+!torture/*.md
