@@ -244,9 +244,9 @@ struct termcolor {
     unsigned char d, r, g, b;
     static int wantcolor;
 
-    termcolor()                    : d(0) { }
-    termcolor(int c)               : d(c) { }
-    termcolor(int r, int g, int b) : d(38), r(r), g(g), b(b) { }
+    termcolor()                       : d(0) { }
+    termcolor(int d_)                 : d(d_) { }
+    termcolor(int r_, int g_, int b_) : d(38), r(r_), g(g_), b(b_) { }
 
     static termcolor plain, red, green, blue, orange;
 };
@@ -278,8 +278,6 @@ struct std::formatter<termcolor> {
         return std::format_to(ctx.out(), "\033[38;2;{};{};{}m", c.r, c.g, c.b);
     }
 };
-
-template <> inline constexpr bool std::enable_nonlocking_formatter_optimization<termcolor> = true;
 
 inline std::ostream& operator<<(std::ostream& out, termcolor c) {
     return out << std::format("{}", c);
