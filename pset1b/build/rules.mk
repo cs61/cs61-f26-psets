@@ -157,7 +157,7 @@ M61 ?= $(DEP_M61)
 ifneq ($(strip $(DEP_M61)),$(strip $(M61)))
 DEP_M61 := $(shell mkdir -p $(DEPSDIR); echo >$(M61STAMP); (echo "DEP_M61:=$(M61)"; echo "m61-$(M61).cc:") >$(DEPSDIR)/_m61.d)
 endif
-$(shell printf '\x1b[31m*** Using m61-$(M61).cc, sanitizers $(if $(SANFLAGS),enabled,disabled) ***\x1b[m\n\n' 1>&2)
+$(shell printf '\033[31m*** Using m61-$(M61).cc, sanitizers $(if $(SANFLAGS),enabled,disabled) ***\033[m\n\n' 1>&2)
 
 
 V = 0
