@@ -13,7 +13,7 @@ special: $(SPECIALTESTS)
 	$(call run,$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(DEPCFLAGS) -o $@ -c,COMPILE,$<)
 
 m61.o: m61-$(M61).cc $(BUILDSTAMP) $(M61STAMP)
-	$(call run,$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(DEPCFLAGS) -o $@ -c,COMPILE,$<)
+	$(call run,$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(DEPCFLAGS) -o $@ -c,COMPILE,$<,$(FAILSTOP))
 
 $(TESTS): %: %.o m61.o $(OBJS)
 	$(call run,$(CXX) $(CXXFLAGS) $(LDFLAGS) $(O) -o $@ $^ $(LIBS),LINK $@)

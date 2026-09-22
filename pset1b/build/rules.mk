@@ -133,6 +133,14 @@ CFLAGS += -Wno-unused
 CXXFLAGS += -Wno-unused
 endif
 
+# KEEP_GOING
+ifneq ($(findstring k,$(MAKEFLAGS)),)
+KEEP_GOING := 1
+FAILSTOP := || { kill -INT $$PPID; exit 1; }
+else
+FAILSTOP :=
+endif
+
 # these rules ensure dependencies are created
 DEPCFLAGS = -MD -MF $(DEPSDIR)/$(patsubst %.o,%,$(@F)).d -MP
 DEPSDIR := .deps
@@ -162,11 +170,11 @@ $(shell printf '\033[31m*** Using m61-$(M61).cc, sanitizers $(if $(SANFLAGS),ena
 
 V = 0
 ifeq ($(V),1)
-run = $(1) $(3)
-xrun = /bin/echo "$(1) $(3)" && $(1) $(3)
+run = $(1) $(3) $(4)
+xrun = /bin/echo "$(1) $(3)" && $(1) $(3) $(4)
 else
-run = @$(if $(2),/bin/echo "  $(2) $(3)" &&,) $(1) $(3)
-xrun = $(if $(2),/bin/echo "  $(2) $(3)" &&,) $(1) $(3)
+run = @$(if $(2),/bin/echo "  $(2) $(3)" &&,) $(1) $(3) $(4)
+xrun = $(if $(2),/bin/echo "  $(2) $(3)" &&,) $(1) $(3) $(4)
 endif
 runquiet = @$(1) $(3)
 
