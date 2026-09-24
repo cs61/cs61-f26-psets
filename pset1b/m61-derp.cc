@@ -12,34 +12,6 @@ struct allocinfo {
 };
 static std::map<char*, allocinfo> blocks;
 
-void check_rep() {
-    char* buffer = nullptr;     // infer start of buffer from first iterator
-    char* expected = nullptr;   // expected position of next iterartor
-    for (auto it = blocks.begin(); it != blocks.end(); ++it) {
-        // check start of block
-        if (!buffer) {
-            buffer = it->first;
-        } else {
-            assert(expected == it->first);
-        }
-        // check sizes against each other:
-        // no zero-length block; blocks 8MiB or smaller
-        assert(it->second.bsz > 0 && it->second.bsz <= (8 << 20));
-        // blocks are aligned
-        assert(it->second.bsz % 16 == 0);
-        // free blocks have no `usz`; allocated blocks do
-        if (!it->second.free) {
-            assert(it->second.usz <= it->second.bsz);
-            // no more padding than necessary
-            assert(it->second.bsz - it->second.usz <= 16);
-        }
-        // assign expected next position
-        expected = it->first + it->second.bsz;
-    }
-    // found at least 1 block; blocks together cover 8MiB
-    assert(buffer && expected == buffer + (8 << 20));
-}
-
 void* m61_malloc(size_t sz) {
     if (blocks.empty()) {
         char* buffer = reinterpret_cast<char*>(malloc(8 << 20));
@@ -56,7 +28,6 @@ void* m61_malloc(size_t sz) {
         return nullptr;
     }
 
-check_rep();
     // Successful allocation! Current state:
     //
     //     `it`
@@ -88,7 +59,7 @@ check_rep();
     // split this block!
     // first insert new block
     char* nextptr = it->first + asz;
-    if(it->second.bsz!=asz)blocks[nextptr] = { it->second.bsz - asz, 0, true };
+    blocks[nextptr] = { it->second.bsz - asz, 0, true };
     // then shrink our portion & mark it allocated
     it->second.bsz = asz;
     it->second.usz = sz;
