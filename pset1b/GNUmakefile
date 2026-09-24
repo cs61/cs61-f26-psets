@@ -41,7 +41,7 @@ check-torture/%: $$(basename $$(wildcard torture/$$(*)*.cc))
 	$(call runtests,$^)
 
 check: check-default check-torture
-	@$(call colorecho,32,All tests passed)
+	@$(if $(KEEP_GOING),,$(call colorecho,32,All tests passed))
 check-default: $(patsubst %,check-%,$(TESTS))
 check-special: $(patsubst %,check-%,$(SPECIALTESTS))
 check-torture: $(patsubst %,check-%,$(TORTURETESTS))

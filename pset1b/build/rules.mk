@@ -118,6 +118,8 @@ ifeq ($(or $(TSAN),$(LSAN),$(LEAKSAN),$(SAN)),1)
 CPPFLAGS += -DSAN=1
 CFLAGS += $(SANFLAGS)
 CXXFLAGS += $(SANFLAGS)
+else
+SANFLAGS :=
 endif
 
 # profiling
@@ -148,6 +150,11 @@ BUILDSTAMP := $(DEPSDIR)/rebuildstamp
 DEPFILES := $(wildcard $(DEPSDIR)/*.d)
 ifneq ($(DEPFILES),)
 include $(DEPFILES)
+endif
+
+# KEEP_GOING
+ifneq ($(findstring k,$(MAKEFLAGS)),)
+KEEP_GOING := 1
 endif
 
 # when the C compiler or optimization flags change, rebuild all objects
