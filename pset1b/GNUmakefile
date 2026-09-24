@@ -5,6 +5,8 @@ OBJS = subtest.o
 
 all: $(TESTS) $(TORTURETESTS)
 
+X86 ?= 0
+
 -include build/rules.mk
 
 special: $(SPECIALTESTS)
