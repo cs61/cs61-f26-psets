@@ -99,7 +99,7 @@ RUN useradd -m -s /bin/bash -u "${UID}" cs61-user &&\
  echo "cs61-user ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/cs61-init
 
 # create binary reporting version of dockerfile
-RUN (echo '#\!/bin/sh'; echo 'echo 25') > /usr/bin/cs61-docker-version; chmod ugo+rx,u+w,go-w /usr/bin/cs61-docker-version
+RUN (echo '#\!/bin/sh'; echo 'echo 27') > /usr/bin/cs61-docker-version; chmod ugo+rx,u+w,go-w /usr/bin/cs61-docker-version
 
 # git build arguments
 ARG USER=CS61\ User
@@ -120,7 +120,7 @@ RUN git config --global user.name "${USER}" &&\
  (echo "if test -e /run/host-services/ssh-auth.sock; then"; echo "  sudo chown cs61-user:cs61-user /run/host-services/ssh-auth.sock"; echo "fi") >> ~/.bash_profile &&\
  echo ". ~/.bashrc" >> ~/.bash_profile &&\
  rm -f ~/.bash_logout &&\
- echo "add-auto-load-safe-path ~" > ~/.gdbinit
+ (echo "add-auto-load-safe-path ~"; echo "set debuginfod enabled on") > ~/.gdbinit
 
 WORKDIR /home/cs61-user
 CMD ["/bin/bash", "-l"]
