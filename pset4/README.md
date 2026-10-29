@@ -1,4 +1,4 @@
-CS 61 Problem Set 5
+CS 61 Problem Set 4
 ===================
 
 **Fill out both this file and `AUTHORS.md` before submitting.** We grade

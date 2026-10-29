@@ -42,17 +42,26 @@ CHECKENV = ASAN_OPTIONS=detect_leaks=1
 endif
 
 # `$(call colorecho,COLOR,TEXT)` prints TEXT, in bold color COLOR if
-# standard output is a terminal. `$(call runtests,TESTS)` runs each test
-# in TESTS, printing a green line if it passes and a red line if it fails.
+# standard output is a terminal. `$(call runtests,TESTS[,MESSAGE])` runs each
+# test in TESTS, one at a time, printing a green line if it passes and a red
+# line if it fails, then prints MESSAGE if all tests passed. It stops at the
+# first failure unless `make -k` is given. (`make -j` builds tests in parallel,
+# but they always run one at a time, since many tests depend on timing.)
 colorecho = if [ -t 1 -a -t 2 ]; then printf '\033[1;$(1)m%s\033[m\n' "$(2)"; else echo "$(2)"; fi
 runtests = @if [ -z "$(1)" ]; then echo "*** No matching tests" 1>&2; exit 1; fi; \
-	for t in $(1); do $(CHECKENV) ./$$t; s=$$?; if [ $$s = 0 ]; then $(call colorecho,32,$$t passed); else $(call colorecho,31,$$t FAILED with exit status $$s); exit 1; fi; done
+	f=0; for t in $(1); do $(CHECKENV) ./$$t; s=$$?; \
+	if [ $$s = 0 ]; then $(call colorecho,32,$$t passed); \
+	else $(call colorecho,31,$$t FAILED with exit status $$s); f=1; $(if $(KEEP_GOING),,exit 1;) fi; done; \
+	$(if $(2),if [ $$f = 0 ]; then $(call colorecho,32,$(2)); fi;) exit $$f
 
-check: check-default check-torture
-	@$(if $(KEEP_GOING),,$(call colorecho,32,All tests passed))
-check-default: $(patsubst %,check-%,$(TESTS))
-check-special: $(patsubst %,check-%,$(SPECIALTESTS))
-check-torture: $(patsubst %,check-%,$(TORTURETESTS))
+check: sh61 $(TESTS) $(TORTURETESTS)
+	$(call runtests,$(TESTS) $(TORTURETESTS),All tests passed)
+check-default: sh61 $(TESTS)
+	$(call runtests,$(TESTS))
+check-special: sh61 $(SPECIALTESTS)
+	$(call runtests,$(SPECIALTESTS))
+check-torture: sh61 $(TORTURETESTS)
+	$(call runtests,$(TORTURETESTS))
 
 # `make check-NAME` runs the tests in t/, tt/, and torture/ whose names start
 # with NAME
